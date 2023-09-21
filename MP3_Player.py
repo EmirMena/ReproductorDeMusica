@@ -8,6 +8,7 @@ class MP3_Player():
         self.actual_song_index = 0  # Índice de la canción actual en la lista de reproducción
 
     def play_audio(self):
+        "musica sonando"
         pygame.mixer.music.stop()
         if not pygame.mixer.music.get_busy() and self.reproduction_list:
             pygame.mixer.music.load(self.reproduction_list[self.actual_song_index])
@@ -21,9 +22,11 @@ class MP3_Player():
             pygame.mixer.music.play()
 
     def pause_audio(self):
+        "Musica pausada"
         pygame.mixer.music.pause()
 
     def unpause_audio(self):
+        "Musica Despausada"
         pygame.mixer.music.unpause()
 
     def next_song(self):
@@ -38,4 +41,9 @@ class MP3_Player():
             print("Added: " + song_path)
             self.reproduction_list.append(song_path)
 
+    def song_is_playing(self):
+        return pygame.mixer.music.get_busy()
+    def get_actual_song_index(self):
+        return self.actual_song_index
+    
                         

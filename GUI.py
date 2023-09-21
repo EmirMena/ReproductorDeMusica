@@ -7,6 +7,7 @@ class GUI:
         self.window=None
         #atributos de despliegue
         self.song_list=[]
+        self.song_is_playing=False
         #atributos de configuracion gráfica
         self.title_color="#55BDED"
         self.background_color="#362836"
@@ -61,19 +62,21 @@ class GUI:
         self.generate_song_buttons(song_list_frame)
         
         #Generar la lista de reproduccion (canciones que sonarán)
-        reproduction_list_frame = ctk.CTkFrame(master=self.frame, fg_color=self.emphasis_color)
-        reproduction_list_frame.pack(pady=0, padx=0)
-        self.generate_repopduction_list(reproduction_list_frame)
+        #reproduction_list_frame = ctk.CTkFrame(master=self.frame, fg_color=self.emphasis_color)
+        #reproduction_list_frame.pack(pady=0, padx=0)
+        #self.generate_repopduction_list(reproduction_list_frame)
 
-        #Reproductor de musica
+        #Reproductor de musica (botones de play, next, previous?)
         player_frame = ctk.CTkFrame(
             master=self.window
             )
         player_frame.pack(pady=20, padx=0, side="bottom")
         self.generate_player_buttons(player_frame)
 
-
+        
         self.window.mainloop()
+
+        #FUNCIONES PARA GENERAR LOS BOTONES------------------------------------------------------------------
     def generate_reproduction_list(self,frame):
         for song in self.reproduction_list:
             songs_name, autor, song_path = song[0], song[1], song[3]
@@ -113,7 +116,6 @@ class GUI:
                 corner_radius=0,
                 command=lambda path=song_path: self.Music_Player_Controller.play_raw_song(path))
             reproduction_song_button.grid(row=row_counter + 1, column=0)
-
             add_song_button = ctk.CTkButton(
                 master=scroller_frame, image=add_icon,
                 text="", height=BUTTON_HEIGHT+13,
@@ -121,34 +123,54 @@ class GUI:
                 bg_color=self.button_color,hover_color=self.subtitle_color,
                 font=self.secundary_font,
                 corner_radius=0,
-                command=lambda path=song_path: self.Music_Player_Controller.play_raw_song(path))
+                command=lambda path=song_path: self.Music_Player_Controller.add_song(path))
             add_song_button.grid(row=row_counter + 1, column=1)
             row_counter += 1
 
     def generate_player_buttons(self,frame):
         BUTTON_WITDH = 40  # Ancho fijo para los botones
         BUTTON_HEIGHT = 40  # Alto fijo para los botones
-
+        #boton de play y pausa (ya que ambos son los mismos)--------------------------------
         play_icon = ctk.CTkImage(Image.open("images/play_icon.png"), size=(BUTTON_WITDH, BUTTON_HEIGHT))
-        play_button = ctk.CTkButton(
-            master=frame, image=play_icon,
-            fg_color=self.button_color, 
-            bg_color="transparent", hover_color=self.subtitle_color,text="",
-            corner_radius=0,
-            #font=self.fuenteSecundaria, text="Reproducir", corner_radius=0, 
-            compound="top")
-        play_button.pack(side="left", padx=0)
+        pause_icon = ctk.CTkImage(Image.open("images/pause_icon.png"), size=(BUTTON_WITDH, BUTTON_HEIGHT))
+        
+        if self.song_is_playing:
+            self.set_song_is_playing(False)
+            pause_button = ctk.CTkButton(
+                master=frame, image=pause_icon,
+                fg_color=self.button_color, 
+                bg_color="transparent", hover_color=self.subtitle_color,text="",
+                corner_radius=0,
+                compound="top",
+                command=lambda: self.Music_Player_Controller.pause_song()
+                )
+            pause_button.pack(side="left", padx=0)
+        else:
+            self.set_song_is_playing(True)
+            play_button = ctk.CTkButton(
+                master=frame, image=play_icon,
+                fg_color=self.button_color, 
+                bg_color="transparent", hover_color=self.subtitle_color,text="",
+                corner_radius=0,
+                compound="top",
+                command=lambda: self.Music_Player_Controller.play_song()
+                )
+            play_button.pack(side="left", padx=0)
 
+
+        #boton de next----------------------------------
         next_icon=ctk.CTkImage(Image.open("images/next_icon.png"), size=(BUTTON_WITDH, BUTTON_HEIGHT))
         next_icon = ctk.CTkButton(
             master=frame, image=next_icon,
             fg_color=self.button_color, 
             bg_color="transparent", hover_color=self.subtitle_color,text="",
             corner_radius=0,
-            #font=self.fuenteSecundaria, text="Reproducir", corner_radius=0, 
-            compound="top")
+            compound="top",
+            command=lambda: self.Music_Player_Controller.next_song()
+            )
         next_icon.pack(side="right", padx=0)
-    def generate_option_menu(self,frame):
+
+    def generate_option_menu(self,frame): 
         #optionmenu_var = ctk.StringVar(value="option 3")
         optionmenu = ctk.CTkOptionMenu(
             master=frame,
@@ -164,3 +186,7 @@ class GUI:
 
     def setController(self, Music_Player_Controller):
         self.Music_Player_Controller=Music_Player_Controller
+    def set_song_is_playing(self,song_is_playing):
+        self.song_is_playing=song_is_playing
+    def set_song_list(self,song_list):
+        self.song_list=song_list

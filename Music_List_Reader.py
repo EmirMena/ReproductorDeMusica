@@ -1,4 +1,4 @@
-class Music_List_Reader:
+class Music_List_Reader():
     def __init__(self):
         self.file_path = "Music_List.txt" 
 
